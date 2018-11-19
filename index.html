@@ -4,8 +4,10 @@
         <meta charset="UTF-8">
 
         <style>
+
             table {
                 width: 100%;
+                border: 1px solid black;
                 height: 100%;
             }
 
@@ -17,6 +19,9 @@
             textarea {
                 width: 80%;
                 height: 95%;
+            }
+            td {
+                border: 1px solid black;
             }
         </style>
     </head>
@@ -56,7 +61,15 @@
                 </td>
             </tr>
         </table>
-
+        <table id="Result">
+            <tr>
+                <td>Line</td>
+                <td>Type</td>
+                <td>Name</td>
+                <td>Condition</td>
+                <td>Value</td>
+            </tr>
+        </table>
         <script src="dist/bundle.js"></script>
     </body>
 </html>
