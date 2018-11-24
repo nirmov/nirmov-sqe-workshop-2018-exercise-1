@@ -17,6 +17,7 @@ function handleNext(parsedCode) {
     case 'VariableDeclarator':return handleVariableDeclarator(parsedCode);
     case 'BlockStatement':return handleBlockStatement(parsedCode);
     case 'ExpressionStatement':return handleExpressionStatement(parsedCode);
+    case 'UpdateExpression': return HandleUpdateExpression(parsedCode);
     default:return handleSecond(parsedCode);
     }
 }
@@ -45,10 +46,21 @@ function handleForth(parsedCode) {
     case 'IfStatement':return handleIfStatement(parsedCode, 'if statment');
     case 'VariableDeclaration':return handleVariableDeclaration(parsedCode);
     case 'Program':return handleProgram(parsedCode);
+    case 'ForStatement': return handleForStatement(parsedCode);
     default:return handleMemberExpression(parsedCode);
     }
 }
-
+function handleForStatement(parsedCode)
+{
+    var forArray=[];
+    forArray[0]={};
+    addToObj(forArray[0],line, 'for statement', '', parseNewCode(parsedCode.test), '');
+    forArray[1]=parseNewCode(parsedCode.init);
+    Array.prototype.push.apply(forArray,parseNewCode(parsedCode.update));
+    line++;
+    Array.prototype.push.apply(forArray,parseNewCode(parsedCode.body));
+    return forArray;
+}
 function handleProgram(parsedCode) {
     let toReturn = [];
     var i;
@@ -186,4 +198,11 @@ function addToObj(obj, line, type, name, condition, value) {
     obj.name = name;
     obj.condition = condition;
     obj.value = value;
+}
+function HandleUpdateExpression(parsedCode)
+{
+    var toReturn=[];
+    toReturn[0]={};
+    addToObj(toReturn[0],line,'update expression',parseNewCode(parsedCode.argument),'',parsedCode.operator);
+    return toReturn;
 }

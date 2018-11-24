@@ -354,4 +354,13 @@ describe('The javascript parser', () => {
         var after=parseNewCode(Parsed,1);
         assert.equal(after[0].length,2);
     });
+    it('fpr check', () => {
+        var toParse='for(i=0;i<7;i++)\n' +
+            '{\n' +
+            '   var j=5;\n' +
+            '}';
+        var Parsed=parseCode(toParse);
+        var after=parseNewCode(Parsed,1);
+        assert.equal(after[0].length,4);
+    });
 });

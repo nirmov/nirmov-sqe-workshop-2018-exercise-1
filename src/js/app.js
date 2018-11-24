@@ -4,6 +4,7 @@ import {parseNewCode} from './Parser';
 var table = document.getElementById('Result');
 $(document).ready(function () {
     $('#codeSubmissionButton').click(() => {
+        ClearTable();
         let codeToParse = $('#codePlaceholder').val();
         let parsedCode = parseCode(codeToParse);
         $('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
@@ -35,4 +36,13 @@ function addWholeLine(line,type,name,condition,value)
     addColumn(3,condition);
     addColumn(4,value);
 
+}
+function ClearTable()
+{
+    var Rows = table.getElementsByTagName('tr');
+    var Count = Rows.length;
+
+    for(var i=Count-1; i>0; i--) {
+        table.deleteRow(i);
+    }
 }
