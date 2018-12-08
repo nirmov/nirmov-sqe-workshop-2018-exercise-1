@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import {parseCode} from './code-analyzer';
 import {parseNewCode} from './Parser';
+import {symbole,getMapColors,parseArguments} from './symbolic';
+
 var table = document.getElementById('Result');
 $(document).ready(function () {
     $('#codeSubmissionButton').click(() => {
@@ -15,8 +17,40 @@ $(document).ready(function () {
             addWholeLine(Ans[0][i].line, Ans[0][i].type, Ans[0][i].name, Ans[0][i].condition, Ans[0][i].value);
             addRow();
         }
+        parseArguments(document.getElementById('arguments').value);
+        var final=symbole(codeToParse);
+        document.getElementById('functionAfter').innerHTML = '';
+        printNewFunc(final);
     });
 });
+function printNewFunc(final)
+{
+    var mapColors=getMapColors();
+    var indexIf=0;
+    for (let i=0;i<final.length;i++)
+    {
+        var line=final[i];
+        var color=getBackgroundColor(line,indexIf,mapColors);
+        if (color!='white') {
+            indexIf++;
+        }
+        $('#functionAfter').append(
+            $('<div>' + line + '</div>').addClass(color)
+        );
+    }
+}
+
+function getBackgroundColor(line,indexIf,mapColors)
+{
+    if (line.includes('if')||line.includes('else'))
+    {
+        var color=mapColors[indexIf];
+        if (color==true)
+            return 'green';
+        return 'red';
+    }
+    return 'white';
+}
 var newRow;
 function addRow()
 {

@@ -55,7 +55,8 @@ function handleForStatement(parsedCode)
     var forArray=[];
     forArray[0]={};
     addToObj(forArray[0],line, 'for statement', '', parseNewCode(parsedCode.test), '');
-    forArray[1]=parseNewCode(parsedCode.init);
+    Array.prototype.push.apply(forArray,parseNewCode(parsedCode.init));
+    line--;
     Array.prototype.push.apply(forArray,parseNewCode(parsedCode.update));
     line++;
     Array.prototype.push.apply(forArray,parseNewCode(parsedCode.body));
@@ -65,9 +66,11 @@ function handleProgram(parsedCode) {
     let toReturn = [];
     var i;
     for (i = 0; i < parsedCode.body.length; i++) {
-        toReturn[i] = parseNewCode(parsedCode.body[i]);
+        Array.prototype.push.apply(toReturn, parseNewCode(parsedCode.body[i]));
     }
-    return toReturn;
+    let to=[];
+    to[0]=toReturn;
+    return to;
 }
 
 function handleFunctionDeclaration(parsedCode) {
@@ -140,7 +143,7 @@ function handleWhileStatement(parsedCode) {
 function handleBinaryExpression(parsedCode) {
     var left = parseNewCode(parsedCode.left);
     var right = parseNewCode(parsedCode.right);
-    return left + parsedCode.operator + right;
+    return '('+ left+ parsedCode.operator + right+')';
 }
 
 function handleIdentifier(parsedCode) {
@@ -148,6 +151,9 @@ function handleIdentifier(parsedCode) {
 }
 
 function handleLiteral(parsedCode) {
+    if (isNaN(parsedCode.value)) {
+        return '\'' + parsedCode.value + '\'';
+    }
     return parsedCode.value;
 }
 

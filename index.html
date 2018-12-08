@@ -20,12 +20,27 @@
                 width: 80%;
                 height: 95%;
             }
+            .red {
+                background-color : red;
+            }
+            .green {
+                background-color : green;
+            }
+            .white {
+                background-color : transparent;
+            }
             td {
                 border: 1px solid black;
+            }
+            #functionAfter
+            {
+                white-space: pre-wrap;
+                s pre-wrap;
             }
         </style>
     </head>
     <body>
+    Arguments:  <input type="text" id="arguments" value=""><br>
         <table>
             <tr>
                 <td>
@@ -40,6 +55,7 @@
                 </td>
             </tr>
             <tr>
+
                 <td>
                     <div class="textAreaWrapper">
                         <textarea id="codePlaceholder" title="Enter code here"></textarea>
@@ -49,6 +65,9 @@
                     <div class="textAreaWrapper">
                         <textarea id="parsedCode" title="Parse code"></textarea>
                     </div>
+                </td>
+                <td>
+                    <div id="functionAfter"> </div>
                 </td>
             </tr>
             <tr>
