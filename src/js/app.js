@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import {parseCode} from './code-analyzer';
 import {parseNewCode} from './Parser';
-import {symbole,getMapColors,parseArguments} from './symbolic';
+import {symbole,getMapColors,parseArguments,initiateVariableMap} from './symbolic';
 
 var table = document.getElementById('Result');
 $(document).ready(function () {
@@ -11,6 +11,7 @@ $(document).ready(function () {
         let parsedCode = parseCode(codeToParse);
         $('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
         addRow();
+        initiateVariableMap();
         var Ans=parseNewCode(parsedCode,1);
         var i=0;
         for (i=0;i<Ans[0].length;i++) {

@@ -1,4 +1,5 @@
 export {parseNewCode,handleLiteral,handleIfStatement,handleUnaryExpression,handleWhileStatement,handleVariableDeclaration,handleAssignmentExpression,handleMemberExpression,handleIdentifier,handleReturnStatement,handleBinaryExpression};
+import {inserTtoVariableMap} from './symbolic';
 let line=1;
 function parseNewCode(parsedCode,lineIn) {
     if (lineIn!=undefined)
@@ -66,13 +67,26 @@ function handleProgram(parsedCode) {
     let toReturn = [];
     var i;
     for (i = 0; i < parsedCode.body.length; i++) {
+        checkGloabalVariables(parsedCode.body[i].declarations);
         Array.prototype.push.apply(toReturn, parseNewCode(parsedCode.body[i]));
     }
     let to=[];
     to[0]=toReturn;
     return to;
 }
-
+function checkGloabalVariables(value)
+{
+    if (value!=null)
+    {
+        for (let i=0;i<value.length;i++)
+        {
+            if (value[i].type=='VariableDeclarator')
+            {
+                inserTtoVariableMap(value[i].id.name,parseNewCode(value[i].init));
+            }
+        }
+    }
+}
 function handleFunctionDeclaration(parsedCode) {
     let toReturn = [];
     toReturn[0] = {};

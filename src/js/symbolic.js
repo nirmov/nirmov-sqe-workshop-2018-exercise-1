@@ -3,25 +3,40 @@ import {parseCode} from './code-analyzer';
 var variableMap;
 var dicLines;
 var mapColors;
-export {initiateDics,setVariableMap,parseNewCode,getMapColors,replaceVariables,symbole,parseArguments};
+export {initiateDics,initiateVariableMap,inserTtoVariableMap,parseNewCode,getMapColors,replaceVariables,symbole,parseArguments};
+function inserTtoVariableMap(left,right)
+{
+    if (variableMap==undefined)
+        variableMap=[];
+    var tokenArray=getTokenArray(right);
+    for (let i=0;i<tokenArray.length;i++)
+    {
+        if (tokenArray[i] in variableMap)
+            right=right.replace(tokenArray[i],variableMap[tokenArray[i]]);
+    }
+    variableMap[left]=right;
+}
 function symbole(func)
 {
     var parsedCode=parseCode(func);
     initiateDics();
-    setVariableMap(variableMap);
     var dic=[];
+    initiateDic(dic);
     parseNewCode(parsedCode,dic,undefined,1)[0];
     var final=AddLinesOfFunc(func);
     return final;
+}
+function initiateDic(dic)
+{
+    for (var value in variableMap)
+    {
+        dic[value]=variableMap[value];
+    }
 }
 function initiateDics()
 {
     dicLines=[];
     mapColors=[];
-}
-function setVariableMap(map)
-{
-    variableMap=map;
 }
 function getMapColors()
 {
@@ -169,7 +184,7 @@ function handleAssignmentExpression(parsedCode,dictinoary,lastIf) {
     var right=parseNewCode(parsedCode.right,dictinoary,lastIf);
     addToObj(obj, line, 'assignment expression',left , '', right);
     if (left in variableMap)
-        variableMap[left]=right;
+        inserTtoVariableMap(left,right);
     addToDic(left,right,dictinoary);
     return obj;
 }
@@ -238,6 +253,10 @@ function handleIfStatement(parsedCode, type,dictinoary,lastIf) {
     }
     return toReturn;
 }
+function initiateVariableMap()
+{
+    variableMap=[];
+}
 function calculatePharse(pharse,dictinoary,lastIf)
 {
     var value=replaceVariables(pharse,dictinoary);
@@ -245,7 +264,7 @@ function calculatePharse(pharse,dictinoary,lastIf)
     for (let i=0;i<array.length;i++)
     {
         if (array[i] in variableMap)
-            value=value.replace(array[i],variableMap[array[i]]);
+            value=replaceAll(value,array[i],variableMap[array[i]]);
     }
     var isTrue= eval(value);
     if (lastIf==undefined)
@@ -256,6 +275,9 @@ function calculatePharse(pharse,dictinoary,lastIf)
             return isTrue;
         return false;
     }
+}
+function replaceAll(str, find, replace) {
+    return str.split(find).join(replace);
 }
 function handleReturnStatement(parsedCode,dictinoary) {
     var toReturn = [];
@@ -341,6 +363,8 @@ function evalPharse(value)
     try
     {
         toReturn=eval(value);
+        if (/^[a-zA-Z]+$/.test(toReturn))
+            toReturn=value;
     }
     catch(e)
     {
@@ -393,15 +417,16 @@ function getStringToPresent(index,sentence)
 function getAssigmentName(sentence)
 {
     if (sentence.includes('=')) {
-        var array = sentence.split('').filter(a => a !== ' ');
+        var array =getTokenArray(sentence).filter(a=>a!=='');
         return array[0];
     }
     return '';
 }
 function parseArguments(subject)
 {
-    variableMap=[];
-    var result = subject.split(/,(?![^\(\[]*[\]\)])/g);
+    if (variableMap==undefined)
+        variableMap=[];
+    var result = subject.split(/,(?![^\(\[]*[\]\)])/g).filter(a=>a!=='');
     for (let i=0;i<result.length;i++)
     {
         var variable=result[i];
