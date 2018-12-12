@@ -1,5 +1,5 @@
 export {parseNewCode,handleLiteral,handleIfStatement,handleUnaryExpression,handleWhileStatement,handleVariableDeclaration,handleAssignmentExpression,handleMemberExpression,handleIdentifier,handleReturnStatement,handleBinaryExpression};
-import {inserTtoVariableMap} from './symbolic';
+import {inserTtoVariableMap,inserToVariableMapIfInVariavble} from './symbolic';
 let line=1;
 function parseNewCode(parsedCode,lineIn) {
     if (lineIn!=undefined)
@@ -141,7 +141,10 @@ function handleExpressionStatement(parsedCode) {
 
 function handleAssignmentExpression(parsedCode) {
     var obj = {};
-    addToObj(obj, line, 'assignment expression', parseNewCode(parsedCode.left), '', parseNewCode(parsedCode.right));
+    var left =parseNewCode(parsedCode.left);
+    var right =parseNewCode(parsedCode.right);
+    addToObj(obj, line, 'assignment expression', left, '', right);
+    inserToVariableMapIfInVariavble(left,right);
     return obj;
 }
 

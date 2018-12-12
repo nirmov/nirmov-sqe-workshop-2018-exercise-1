@@ -3,7 +3,7 @@ import {parseCode} from './code-analyzer';
 var variableMap;
 var dicLines;
 var mapColors;
-export {initiateDics,initiateVariableMap,inserTtoVariableMap,parseNewCode,getMapColors,replaceVariables,symbole,parseArguments};
+export {initiateDics,initiateVariableMap,inserTtoVariableMap,parseNewCode,getMapColors,replaceVariables,symbole,parseArguments,inserToVariableMapIfInVariavble};
 function inserTtoVariableMap(left,right)
 {
     if (variableMap==undefined)
@@ -15,6 +15,11 @@ function inserTtoVariableMap(left,right)
             right=right.replace(tokenArray[i],variableMap[tokenArray[i]]);
     }
     variableMap[left]=right;
+}
+function inserToVariableMapIfInVariavble(left,right)
+{
+    if (left in variableMap)
+        inserTtoVariableMap(left,right);
 }
 function symbole(func)
 {
