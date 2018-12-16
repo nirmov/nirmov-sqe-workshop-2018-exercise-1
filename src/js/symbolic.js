@@ -3,11 +3,9 @@ import {parseCode} from './code-analyzer';
 var variableMap;
 var dicLines;
 var mapColors;
-export {initiateDics,initiateVariableMap,inserTtoVariableMap,parseNewCode,getMapColors,replaceVariables,symbole,parseArguments,inserToVariableMapIfInVariavble};
+export {initiateDics,initiateVariableMap,inserTtoVariableMap,parseNewCode,getMapColors,replaceVariables,symbole,parseArguments};
 function inserTtoVariableMap(left,right)
 {
-    if (variableMap==undefined)
-        variableMap=[];
     var tokenArray=getTokenArray(right);
     for (let i=0;i<tokenArray.length;i++)
     {
@@ -16,11 +14,13 @@ function inserTtoVariableMap(left,right)
     }
     variableMap[left]=right;
 }
-function inserToVariableMapIfInVariavble(left,right)
+/*function inserToVariableMapIfInVariavble(left,right)
 {
-    if (left in variableMap)
-        inserTtoVariableMap(left,right);
-}
+    if (variableMap!=undefined) {
+        if (left in variableMap)
+            inserTtoVariableMap(left, right);
+    }
+}*/
 function symbole(func)
 {
     var parsedCode=parseCode(func);
@@ -51,22 +51,22 @@ let line=1;
 function parseNewCode(parsedCode,dictinoary,lastIf,lineIn) {
     if (lineIn!=undefined)
         line=lineIn;
-    if (parsedCode != null && parsedCode.type != null) {
+    if (parsedCode!=null){
         switch (parsedCode.type) {
-            case 'FunctionDeclaration':return handleFunctionDeclaration(parsedCode,dictinoary,lastIf);
-            default:return handleNext(parsedCode,dictinoary,lastIf);
+        case 'FunctionDeclaration':
+            return handleFunctionDeclaration(parsedCode, dictinoary, lastIf);
+        default:
+            return handleNext(parsedCode, dictinoary, lastIf);
         }
-    } else
-        return null;
+    }
 }
 
 function handleNext(parsedCode,dictinoary,lastIf) {
     switch (parsedCode.type) {
-        case 'VariableDeclarator':return handleVariableDeclarator(parsedCode,dictinoary,lastIf);
-        case 'BlockStatement':return handleBlockStatement(parsedCode,dictinoary,lastIf);
-        case 'ExpressionStatement':return handleExpressionStatement(parsedCode,dictinoary,lastIf);
-        case 'UpdateExpression': return HandleUpdateExpression(parsedCode,dictinoary,lastIf);
-        default:return handleSecond(parsedCode,dictinoary,lastIf);
+    case 'VariableDeclarator':return handleVariableDeclarator(parsedCode,dictinoary,lastIf);
+    case 'BlockStatement':return handleBlockStatement(parsedCode,dictinoary,lastIf);
+    case 'ExpressionStatement':return handleExpressionStatement(parsedCode,dictinoary,lastIf);
+    default:return handleSecond(parsedCode,dictinoary,lastIf);
     }
 }
 function handleSecond(parsedCode,dictinoary,lastIf) {
@@ -188,8 +188,6 @@ function handleAssignmentExpression(parsedCode,dictinoary,lastIf) {
     var left=parseNewCode(parsedCode.left,dictinoary,lastIf);
     var right=parseNewCode(parsedCode.right,dictinoary,lastIf);
     addToObj(obj, line, 'assignment expression',left , '', right);
-    if (left in variableMap)
-        inserTtoVariableMap(left,right);
     addToDic(left,right,dictinoary);
     return obj;
 }
@@ -264,7 +262,7 @@ function initiateVariableMap()
 }
 function calculatePharse(pharse,dictinoary,lastIf)
 {
-    var value=replaceVariables(pharse,dictinoary);
+    var value=replaceVariablesCalc(pharse,dictinoary);
     var array=value.split(/[\s<>,=()*/;{}%+-]+/).filter(a=>a!==' ');
     for (let i=0;i<array.length;i++)
     {
@@ -310,14 +308,7 @@ function addToObj(obj, line, type, name, condition, value) {
     obj.condition = condition;
     obj.value = value;
 }
-function HandleUpdateExpression(parsedCode,dictinoary)
-{
-    var toReturn=[];
-    toReturn[0]={};
-    addToObj(toReturn[0],line,'update expression',parseNewCode(parsedCode.argument,dictinoary),'',parsedCode.operator);
-    return toReturn;
-}
-// return the value splited into array of numbers/variables
+//return the value splited into array of numbers/variables
 function getTokenArray(value) {
     var result = [];
     if (!isNaN(value))
@@ -327,6 +318,8 @@ function getTokenArray(value) {
 }
 function addToDic(name,value,dictinoary)
 {
+    if (value==null)
+        value='';
     value=replaceVariables(value,dictinoary);
     dictinoary[name] = value;
 }
@@ -345,6 +338,21 @@ function replaceVariables(value,dictinoary,bool)
     }
     if (bool) {
         return value;
+    }
+    value = replaceNumbers(value);
+    return value;
+}
+function replaceVariablesCalc(value,dictinoary)
+{
+    var ArrayOfTokens=getTokenArray(value);
+    for (let i=0;i<ArrayOfTokens.length;i++)
+    {
+        var tok=ArrayOfTokens[i];
+        var tokInDic=tok;
+        if (dictinoary[tok]!=undefined) {
+            tokInDic = dictinoary[tok];
+        }
+        value=value.replace(tok,tokInDic);
     }
     value = replaceNumbers(value);
     return value;
