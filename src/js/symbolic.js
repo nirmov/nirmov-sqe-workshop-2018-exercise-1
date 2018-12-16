@@ -71,30 +71,30 @@ function handleNext(parsedCode,dictinoary,lastIf) {
 }
 function handleSecond(parsedCode,dictinoary,lastIf) {
     switch (parsedCode.type) {
-        case 'AssignmentExpression':return handleAssignmentExpression(parsedCode,dictinoary,lastIf);
-        case 'WhileStatement':return handleWhileStatement(parsedCode,dictinoary,lastIf);
-        case 'BinaryExpression':return handleBinaryExpression(parsedCode,dictinoary,lastIf);
-        case 'Identifier':return handleIdentifier(parsedCode,dictinoary,lastIf);
-        default:return handleThird(parsedCode,dictinoary,lastIf);
+    case 'AssignmentExpression':return handleAssignmentExpression(parsedCode,dictinoary,lastIf);
+    case 'WhileStatement':return handleWhileStatement(parsedCode,dictinoary,lastIf);
+    case 'BinaryExpression':return handleBinaryExpression(parsedCode,dictinoary,lastIf);
+    case 'Identifier':return handleIdentifier(parsedCode,dictinoary,lastIf);
+    default:return handleThird(parsedCode,dictinoary,lastIf);
     }
 }
 
 function handleThird(parsedCode,dictinoary,lastIf) {
     switch (parsedCode.type) {
-        case 'Literal':return handleLiteral(parsedCode,dictinoary,lastIf);
-        case 'ElseIfStatment':return handleElseIfStatment(parsedCode,dictinoary,lastIf);
-        case 'ReturnStatement':return handleReturnStatement(parsedCode,dictinoary,lastIf);
-        case 'UnaryExpression':return handleUnaryExpression(parsedCode,dictinoary,lastIf);
-        default:return handleForth(parsedCode,dictinoary,lastIf);
+    case 'Literal':return handleLiteral(parsedCode,dictinoary,lastIf);
+    case 'ElseIfStatment':return handleElseIfStatment(parsedCode,dictinoary,lastIf);
+    case 'ReturnStatement':return handleReturnStatement(parsedCode,dictinoary,lastIf);
+    case 'UnaryExpression':return handleUnaryExpression(parsedCode,dictinoary,lastIf);
+    default:return handleForth(parsedCode,dictinoary,lastIf);
     }
 }
 
 function handleForth(parsedCode,dictinoary,lastIf) {
     switch (parsedCode.type) {
-        case 'IfStatement':return handleIfStatement(parsedCode, 'if statment',dictinoary,lastIf);
-        case 'VariableDeclaration':return handleVariableDeclaration(parsedCode,dictinoary,lastIf);
-        case 'Program':return handleProgram(parsedCode,dictinoary,lastIf);
-        default:return handleMemberExpression(parsedCode,dictinoary,lastIf);
+    case 'IfStatement':return handleIfStatement(parsedCode, 'if statment',dictinoary,lastIf);
+    case 'VariableDeclaration':return handleVariableDeclaration(parsedCode,dictinoary,lastIf);
+    case 'Program':return handleProgram(parsedCode,dictinoary,lastIf);
+    default:return handleMemberExpression(parsedCode,dictinoary,lastIf);
     }
 }
 function handleProgram(parsedCode,dictinoary,lastIf) {
@@ -237,6 +237,11 @@ function handleIfStatement(parsedCode, type,dictinoary,lastIf) {
     var tempDic=copyDicToTemp(dictinoary);
     Array.prototype.push.apply(toReturn, parseNewCode(parsedCode.consequent,dictinoary,isIn));
     dictinoary=tempDic;
+    return handleAlternate(parsedCode,type,dictinoary,lastIf,tempDic,toReturn);
+
+}
+function handleAlternate(parsedCode, type,dictinoary,lastIf,tempDic,toReturn)
+{
     if (parsedCode.alternate != null) {
         if (parsedCode.alternate.type == 'IfStatement')
             parsedCode.alternate.type = 'ElseIfStatment';
@@ -247,8 +252,7 @@ function handleIfStatement(parsedCode, type,dictinoary,lastIf) {
                 mapColors.push(true);
             else
                 mapColors.push(false);
-            copyDicToDic(dictinoary);
-            line++;
+            copyDicToDic(dictinoary);line++;
         }
         tempDic=copyDicToTemp(dictinoary);
         Array.prototype.push.apply(toReturn, parseNewCode(parsedCode.alternate,dictinoary,lastIf));
@@ -439,7 +443,9 @@ function parseArguments(subject)
 {
     if (variableMap==undefined)
         variableMap=[];
-    var result = subject.split(/,(?![^\(\[]*[\]\)])/g).filter(a=>a!=='');
+    //var dummy = '';
+    //var regex_string = `${dummy}`;
+    var result = subject.split(/,(?![^([]*[\])])/g).filter(a=>a!=='');
     for (let i=0;i<result.length;i++)
     {
         var variable=result[i];

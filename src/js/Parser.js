@@ -80,10 +80,7 @@ function checkGloabalVariables(value)
     {
         for (let i=0;i<value.length;i++)
         {
-            if (value[i].type=='VariableDeclarator')
-            {
-                inserTtoVariableMap(value[i].id.name,parseNewCode(value[i].init));
-            }
+            inserTtoVariableMap(value[i].id.name,parseNewCode(value[i].init));
         }
     }
 }
