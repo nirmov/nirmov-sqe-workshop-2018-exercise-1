@@ -1,5 +1,15 @@
 import assert from 'assert';
 import {
+    handleLiteral,
+    handleIdentifier,
+    handleMemberExpression,
+    handleBinaryExpression,
+    handleUnaryExpression,
+    handleAssignmentExpression,
+    handleReturnStatement,
+    handleIfStatement,
+    handleWhileStatement,
+    handleVariableDeclaration,
     parseNewCode
 } from '../src/js/Parser';
 import $ from 'jquery';
@@ -49,7 +59,7 @@ describe('The javascript parser', () => {
                 "raw": "1"
             }
         };
-        assert.equal(parseNewCode(binary),'(mid-1)');
+        assert.equal(parseNewCode(binary),'mid-1');
     });
     it('is parsing to UnaryExpression', () => {
         var unary = {
@@ -100,7 +110,7 @@ describe('The javascript parser', () => {
                 "type":"assignment expression",
                 "name":"x",
                 "condition":"",
-                "value":'(x+1)'
+                "value":'x+1'
             };
         var ans1=[];
         ans1[0]=[];
@@ -157,7 +167,7 @@ describe('The javascript parser', () => {
                 "line" :null,
                 "type":"while statment",
                 "name":'',
-                "condition":'(x<10)',
+                "condition":'x<10',
                 "value":""
             };
         var ans1=[];
@@ -246,7 +256,7 @@ describe('The javascript parser', () => {
                 "line" :null,
                 "type":"if statment",
                 "name":'',
-                "condition":'(x<10)',
+                "condition":'x<10',
                 "value":""
             };
         var ans1=
@@ -255,7 +265,7 @@ describe('The javascript parser', () => {
                 "type":"assignment expression",
                 "name":'x',
                 "condition":'',
-                "value":"(x+1)"
+                "value":"x+1"
             };
         var ans2=
             {
@@ -271,7 +281,7 @@ describe('The javascript parser', () => {
                 "type":"assignment expression",
                 "name":'x',
                 "condition":'',
-                "value":"(x-1)"
+                "value":"x-1"
             };
         var anss=[];
         anss[0]=ans;
@@ -344,7 +354,6 @@ describe('The javascript parser', () => {
         var after=parseNewCode(Parsed,1);
         assert.equal(after[0].length,2);
     });
-<<<<<<< HEAD
     it('fpr check', () => {
         var toParse='for(i=0;i<7;i++)\n' +
             '{\n' +
@@ -352,11 +361,6 @@ describe('The javascript parser', () => {
             '}';
         var Parsed=parseCode(toParse);
         var after=parseNewCode(Parsed,1);
-        assert.equal(after[0].length,3);
+        assert.equal(after[0].length,4);
     });
 });
-
-
-=======
-});
->>>>>>> parent of d2ebbf9... final project

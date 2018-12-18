@@ -1,5 +1,4 @@
 export {parseNewCode,handleLiteral,handleIfStatement,handleUnaryExpression,handleWhileStatement,handleVariableDeclaration,handleAssignmentExpression,handleMemberExpression,handleIdentifier,handleReturnStatement,handleBinaryExpression};
-import {inserTtoVariableMap} from './symbolic';
 let line=1;
 function parseNewCode(parsedCode,lineIn) {
     if (lineIn!=undefined)
@@ -18,6 +17,7 @@ function handleNext(parsedCode) {
     case 'VariableDeclarator':return handleVariableDeclarator(parsedCode);
     case 'BlockStatement':return handleBlockStatement(parsedCode);
     case 'ExpressionStatement':return handleExpressionStatement(parsedCode);
+    case 'UpdateExpression': return HandleUpdateExpression(parsedCode);
     default:return handleSecond(parsedCode);
     }
 }
@@ -46,57 +46,30 @@ function handleForth(parsedCode) {
     case 'IfStatement':return handleIfStatement(parsedCode, 'if statment');
     case 'VariableDeclaration':return handleVariableDeclaration(parsedCode);
     case 'Program':return handleProgram(parsedCode);
-<<<<<<< HEAD
     case 'ForStatement': return handleForStatement(parsedCode);
-    case 'LogicalExpression': return handleLogicalExpression(parsedCode);
     default:return handleMemberExpression(parsedCode);
     }
-}
-function handleLogicalExpression(parsedCode)
-{
-    var left = parseNewCode(parsedCode.left);
-    var right = parseNewCode(parsedCode.right);
-    return '('+ left+ parsedCode.operator + right+')';
 }
 function handleForStatement(parsedCode)
 {
     var forArray=[];
     forArray[0]={};
     addToObj(forArray[0],line, 'for statement', '', parseNewCode(parsedCode.test), '');
-    Array.prototype.push.apply(forArray,parseNewCode(parsedCode.init));
-    line--;
+    forArray[1]=parseNewCode(parsedCode.init);
     Array.prototype.push.apply(forArray,parseNewCode(parsedCode.update));
     line++;
     Array.prototype.push.apply(forArray,parseNewCode(parsedCode.body));
     return forArray;
 }
-=======
-    default:return handleMemberExpression(parsedCode);
-    }
-}
-
->>>>>>> parent of d2ebbf9... final project
 function handleProgram(parsedCode) {
     let toReturn = [];
     var i;
     for (i = 0; i < parsedCode.body.length; i++) {
-        checkGloabalVariables(parsedCode.body[i].declarations);
-        Array.prototype.push.apply(toReturn, parseNewCode(parsedCode.body[i]));
+        toReturn[i] = parseNewCode(parsedCode.body[i]);
     }
-    let to=[];
-    to[0]=toReturn;
-    return to;
+    return toReturn;
 }
-function checkGloabalVariables(value)
-{
-    if (value!=null)
-    {
-        for (let i=0;i<value.length;i++)
-        {
-            inserTtoVariableMap(value[i].id.name,parseNewCode(value[i].init));
-        }
-    }
-}
+
 function handleFunctionDeclaration(parsedCode) {
     let toReturn = [];
     toReturn[0] = {};
@@ -149,13 +122,9 @@ function handleExpressionStatement(parsedCode) {
     return toReturn;
 }
 
-
 function handleAssignmentExpression(parsedCode) {
     var obj = {};
-    var left =parseNewCode(parsedCode.left);
-    var right =parseNewCode(parsedCode.right);
-    addToObj(obj, line, 'assignment expression', left, '', right);
-    //inserToVariableMapIfInVariavble(left,right);
+    addToObj(obj, line, 'assignment expression', parseNewCode(parsedCode.left), '', parseNewCode(parsedCode.right));
     return obj;
 }
 
@@ -171,7 +140,7 @@ function handleWhileStatement(parsedCode) {
 function handleBinaryExpression(parsedCode) {
     var left = parseNewCode(parsedCode.left);
     var right = parseNewCode(parsedCode.right);
-    return '('+ left+ parsedCode.operator + right+')';
+    return left + parsedCode.operator + right;
 }
 
 function handleIdentifier(parsedCode) {
@@ -179,9 +148,6 @@ function handleIdentifier(parsedCode) {
 }
 
 function handleLiteral(parsedCode) {
-    if (isNaN(parsedCode.value)) {
-        return '\'' + parsedCode.value + '\'';
-    }
     return parsedCode.value;
 }
 
@@ -232,4 +198,11 @@ function addToObj(obj, line, type, name, condition, value) {
     obj.name = name;
     obj.condition = condition;
     obj.value = value;
+}
+function HandleUpdateExpression(parsedCode)
+{
+    var toReturn=[];
+    toReturn[0]={};
+    addToObj(toReturn[0],line,'update expression',parseNewCode(parsedCode.argument),'',parsedCode.operator);
+    return toReturn;
 }
