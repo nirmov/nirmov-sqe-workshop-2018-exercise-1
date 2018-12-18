@@ -2,7 +2,8 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-
+        <script src="raphael-min.js"></script>
+        <script src="flowchart.js"></script>
         <style>
 
             table {
@@ -20,12 +21,26 @@
                 width: 80%;
                 height: 95%;
             }
+            .red {
+                background-color : red;
+            }
+            .green {
+                background-color : green;
+            }
+            .white {
+                background-color : transparent;
+            }
             td {
                 border: 1px solid black;
+            }
+            #functionAfter
+            {
+                white-space: pre-wrap;
             }
         </style>
     </head>
     <body>
+    Arguments:  <input type="text" id="arguments" value=""><br>
         <table>
             <tr>
                 <td>
@@ -40,6 +55,7 @@
                 </td>
             </tr>
             <tr>
+
                 <td>
                     <div class="textAreaWrapper">
                         <textarea id="codePlaceholder" title="Enter code here"></textarea>
@@ -49,6 +65,9 @@
                     <div class="textAreaWrapper">
                         <textarea id="parsedCode" title="Parse code"></textarea>
                     </div>
+                </td>
+                <td>
+                    <div id="functionAfter"> </div>
                 </td>
             </tr>
             <tr>
@@ -70,6 +89,7 @@
                 <td>Value</td>
             </tr>
         </table>
+        <div id="diagram">Diagram will be placed here</div>
+
         <script src="dist/bundle.js"></script>
     </body>
-</html>
